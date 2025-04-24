@@ -1,3 +1,56 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+from .models import Program, Sportsman, SportsmanLevel, City
 
 # Create your views here.
+
+
+def program_list(request):
+    programs = Program.objects.select_related('levels').all()
+    result = []
+    for p in programs:
+        result.append({
+            'id': p.id,
+            'name': p.name,
+            'date': p.date,
+            'program_description': p.program_description,
+            'level': p.levels.level if p.levels else None,
+        })
+    return JsonResponse(result, safe=False)
+
+
+# 2. Register a sportsman
+@csrf_exempt
+def registration(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        name = data.get('name')
+        age = data.get('age')
+        city_id = data.get('city')
+        level_id = data.get('level')
+
+        city = get_object_or_404(City, id=city_id)
+        level = get_object_or_404(SportsmanLevel, id=level_id)
+
+        sportsman = Sportsman.objects.create(
+            name=name, age=age, city=city, level=level)
+        return JsonResponse({'message': 'Sportsman registered', 'id': sportsman.id})
+    return JsonResponse({'error': 'Invalid method'}, status=405)
+
+
+@csrf_exempt
+def program_registration(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        sportsman_id = data.get('sportsman_id')
+        program_id = data.get('program_id')
+
+        sportsman = get_object_or_404(Sportsman, id=sportsman_id)
+        program = get_object_or_404(Program, id=program_id)
+
+        sportsman.program = program
+        sportsman.save()
+        return JsonResponse({'message': 'Program assigned'})
+    return JsonResponse({'error': 'Invalid method'}, status=405)

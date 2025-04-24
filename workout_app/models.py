@@ -20,7 +20,7 @@ class Program(models.Model):
     name = models.CharField(max_length=200)
     program_description = models.TextField()
     levels = models.ForeignKey(
-        SportsmanLevel, on_delete=models.SET_NULL, null=True, blank=True)
+        SportsmanLevel, on_delete=models.SET_NULL, null=True, blank=True, related_name="programs")
 
     def __str__(self):
         return f"{self.name} ({self.date})"
