@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
@@ -30,12 +30,12 @@ def registration(request):
         age = data.get('age')
         city_id = data.get('city')
         level_id = data.get('level')
-
+        password = data.get('password')
         city = get_object_or_404(City, id=city_id)
         level = get_object_or_404(SportsmanLevel, id=level_id)
 
         sportsman = Sportsman.objects.create(
-            name=name, age=age, city=city, level=level)
+            name=name, age=age, city=city, level=level, password=password)
         return JsonResponse({'message': 'Sportsman registered', 'id': sportsman.id})
     return JsonResponse({'error': 'Invalid method'}, status=405)
 
@@ -44,13 +44,12 @@ def registration(request):
 def program_registration(request):
     if request.method == 'POST':
         data = json.loads(request.body)
-        sportsman_id = data.get('sportsman_id')
-        program_id = data.get('program_id')
-
-        sportsman = get_object_or_404(Sportsman, id=sportsman_id)
-        program = get_object_or_404(Program, id=program_id)
-
-        sportsman.program = program
-        sportsman.save()
+        name = data.get('name')
+        level_id = data.get('level')
+        program_description = data.get('program_description')
+        date = data.get('date')
+        level = get_object_or_404(SportsmanLevel, id=level_id)
+        Program.objects.create(
+            name=name, program_description=program_description, date=date, levels=level)
         return JsonResponse({'message': 'Program assigned'})
     return JsonResponse({'error': 'Invalid method'}, status=405)

@@ -5,14 +5,14 @@ class City(models.Model):
     city = models.CharField(max_length=100)
 
     def __str__(self):
-        return self.city
+        return str(self.city)
 
 
 class SportsmanLevel(models.Model):
     level = models.CharField(max_length=100)
 
     def __str__(self):
-        return self.level
+        return str(self.level)
 
 
 class Program(models.Model):
@@ -29,6 +29,7 @@ class Program(models.Model):
 class Sportsman(models.Model):
     name = models.CharField(max_length=100)
     age = models.PositiveIntegerField()
+    password = models.CharField(max_length=100)
     level = models.ForeignKey(
         SportsmanLevel, on_delete=models.SET_NULL, null=True, blank=True)
     city = models.ForeignKey(
@@ -37,4 +38,4 @@ class Sportsman(models.Model):
         Program, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
-        return self.name
+        return str(self.name)
