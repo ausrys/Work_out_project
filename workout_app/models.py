@@ -30,6 +30,7 @@ class Sportsman(models.Model):
     name = models.CharField(max_length=100)
     age = models.PositiveIntegerField()
     password = models.CharField(max_length=100)
+    email = models.EmailField(unique=True)
     level = models.ForeignKey(
         SportsmanLevel, on_delete=models.SET_NULL, null=True, blank=True)
     city = models.ForeignKey(

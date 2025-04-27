@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-dbtni)+xplytrh9=9=#vjlz$kopm=k2*gojxov95qs2bgjtx3u
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS: list = []
 
 
 # Application definition
@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sessions',
     'workout_app',
-    'corsheaders'
+    'corsheaders',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
@@ -59,7 +60,11 @@ CORS_ALLOWED_ORIGINS = [
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
 ]
-
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    )
+}
 ROOT_URLCONF = 'workout_project.urls'
 
 TEMPLATES = [
@@ -84,7 +89,6 @@ WSGI_APPLICATION = 'workout_project.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DEBUG = env.bool("DEBUG", default=False)
-
 # Database
 DATABASES = {
     'default': {
