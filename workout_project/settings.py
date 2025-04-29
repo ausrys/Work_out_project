@@ -64,6 +64,7 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'workout_app.auth.user_auth.SportsmanJWTAuthentication',
     )
 }
 ROOT_URLCONF = 'workout_project.urls'

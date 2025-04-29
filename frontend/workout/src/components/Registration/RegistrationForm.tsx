@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import api from "../../api/axios";
 import { useNavigate } from "react-router";
+import TextInput from "../Reusable/TextInput";
+import SelectInput from "../Reusable/SelectInput";
 
 interface FormData {
   name: string;
@@ -9,6 +11,8 @@ interface FormData {
   city: string;
   level: number;
   email: string;
+  weight: number;
+  gender: "male" | "female" ;
 }
 
 const RegisterForm: React.FC = () => {
@@ -19,9 +23,11 @@ const RegisterForm: React.FC = () => {
     city: "",
     level: 1,
     email: "",
+    weight: 0,
+    gender: "male", // default value
   });
   const navigate = useNavigate();
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -49,109 +55,24 @@ const RegisterForm: React.FC = () => {
       >
         <h2 className="text-2xl font-bold mb-4 text-center">Register</h2>
 
-        <div className="mb-4">
-          <label
-            htmlFor="name"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Username
-          </label>
-          <input
-            type="text"
-            name="name"
-            id="name"
-            value={formData.name}
-            onChange={handleChange}
-            className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300"
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <label
-            htmlFor="name"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Email
-          </label>
-          <input
-            type="email"
-            name="email"
-            id="email"
-            value={formData.email}
-            onChange={handleChange}
-            className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300"
-            required
-          />
-        </div>
-
-        <div className="mb-6">
-          <label
-            htmlFor="password"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Password
-          </label>
-          <input
-            type="password"
-            name="password"
-            id="password"
-            value={formData.password}
-            onChange={handleChange}
-            className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300"
-            required
-          />
-        </div>
-        <div className="mb-6">
-          <label
-            htmlFor="age"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Age
-          </label>
-          <input
-            type="number"
-            name="age"
-            id="age"
-            value={formData.age}
-            onChange={handleChange}
-            className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300"
-            required
-          />
-        </div>
-        <div className="mb-6">
-          <label
-            htmlFor="city"
-            className="block text-sm font-medium text-gray-700"
-          >
-            City
-          </label>
-          <input
-            type="text"
-            name="city"
-            id="city"
-            value={formData.city}
-            onChange={handleChange}
-            className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300"
-            required
-          />
-        </div>
-        <div className="mb-6">
-          <label
-            htmlFor="level"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Level
-          </label>
-          <input
-            type="number"
-            name="level"
-            id="level"
-            value={formData.level}
-            onChange={handleChange}
-            className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300"
-            required
-          />
-        </div>
+        <TextInput label="Username" name="name" value={formData.name} onChange={handleChange} required />
+        <TextInput label="Email" name="email" type="email" value={formData.email} onChange={handleChange} required />
+        <TextInput label="Password" name="password" type="password" value={formData.password} onChange={handleChange} required />
+        <TextInput label="Age" name="age" type="number" value={formData.age} onChange={handleChange} required />
+        <TextInput label="City" name="city" value={formData.city} onChange={handleChange} required />
+        <TextInput label="Level" name="level" type="number" value={formData.level} onChange={handleChange} required />
+        <TextInput label="Weight" name="weight" type="number" value={formData.weight} onChange={handleChange} required />
+        <SelectInput
+              label="Gender"
+              name="gender"
+              value={formData.gender}
+              onChange={handleChange}
+              options={[
+                { label: "Male", value: "male" },
+                { label: "Female", value: "female" },
+              ]}
+              required
+/>
         <button
           type="submit"
           className="w-full bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700 transition"

@@ -2,12 +2,17 @@ from rest_framework import serializers
 from workout_app.models import Sportsman
 from django.contrib.auth.hashers import make_password
 
+
 class SportsmanRegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
+    weight = serializers.IntegerField(required=True)
+    gender = serializers.ChoiceField(
+        choices=[('male', 'Male'), ('female', 'Female')], required=True)
 
     class Meta:
         model = Sportsman
-        fields = ['id', 'name', 'age', 'email', 'city', 'level', 'password']
+        fields = ['id', 'name', 'age', 'email', 'weight',
+                  'gender', 'city', 'level', 'password']
 
     def validate_email(self, value):
         if Sportsman.objects.filter(email=value).exists():
