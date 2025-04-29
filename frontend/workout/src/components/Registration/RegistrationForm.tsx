@@ -28,10 +28,9 @@ const RegisterForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(formData);
     try {
-      const response = await api.post("registration/", formData);
-
+      const response  = await api.post("registration/", formData);
+      console.log(response);
       navigate("/home");
     } catch (error: any) {
       if (error.response) {

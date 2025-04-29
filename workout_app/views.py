@@ -2,11 +2,15 @@ from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view, permission_classes
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.hashers import check_password
 import json
+from rest_framework_simplejwt.tokens import RefreshToken
 
+from workout_app.serializers.login_serializer import LoginSerializer
+from workout_app.serializers.programs_by_user_serializer import ProgramSerializer
 from workout_app.serializers.sportsman_serializer import SportsmanRegisterSerializer
 from .models import Program, Sportsman, SportsmanLevel, City
 
@@ -32,9 +36,17 @@ def program_list(request):
 @api_view(['POST'])
 def registration(request):
     serializer = SportsmanRegisterSerializer(data=request.data)
+    # If data is correct and fully provided, save new user
     if serializer.is_valid():
         sportsman = serializer.save()
-        return Response({'message': 'Sportsman registered', 'id': sportsman.id}, status=status.HTTP_201_CREATED)
+        # Generate token
+        refresh = RefreshToken.for_user(sportsman)
+        return Response({
+            'message': 'Sportsman registered',
+            'id': sportsman.id,
+            'access': str(refresh.access_token),
+            'refresh': str(refresh),
+        }, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -53,28 +65,37 @@ def program_registration(request):
     return JsonResponse({'error': 'Invalid method'}, status=405)
 
 # Login function
-@csrf_exempt 
+
+
+@csrf_exempt
+@api_view(['POST'])
 def login_view(request):
-    if request.method != 'POST':
-        return JsonResponse({'error': 'Only POST method allowed'}, status=400)
+    serializer = LoginSerializer(data=request.data)
+    if serializer.is_valid():
+        user = serializer.validated_data['user']
 
-    try:
-        data = json.loads(request.body)
-        email = data.get('email')
-        password = data.get('password')
+        # Generate tokens
+        refresh = RefreshToken.for_user(user)
 
-        if not email or not password:
-            return JsonResponse({'error': 'Email and password are required'}, status=400)
+        return Response({
+            'message': 'Login successful',
+            'id': user.id,
+            'name': user.name,
+            'access': str(refresh.access_token),
+            'refresh': str(refresh),
+        }, status=status.HTTP_200_OK)
 
-        try:
-            user = Sportsman.objects.get(email=email)
-        except Sportsman.DoesNotExist:
-            return JsonResponse({'error': 'Invalid email or password'}, status=400)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        if check_password(password, user.password):
-            return JsonResponse({'id': user.id, 'name': user.name})
-        else:
-            return JsonResponse({'error': 'Invalid email or password'}, status=400)
 
-    except json.JSONDecodeError:
-        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+@csrf_exempt
+@permission_classes([IsAuthenticated])
+def user_programs(request):
+    # This will be your Sportsman instance (after small setup)
+    user = request.user
+
+    # Filter programs related to this Sportsman
+    programs = Program.objects.filter(sportsman=user)
+
+    serializer = ProgramSerializer(programs, many=True)
+    return Response(serializer.data)
