@@ -20,8 +20,7 @@ function LoginForm({}: Props) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await api.post("login/", formData);
-
+      await api.post("login/", formData);
       navigate("/home");
     } catch (error: any) {
       if (error.response) {

@@ -15,28 +15,101 @@ class SportsmanLevel(models.Model):
         return str(self.level)
 
 
-class Program(models.Model):
-    date = models.DateField()
-    name = models.CharField(max_length=200)
-    program_description = models.TextField()
-    levels = models.ForeignKey(
-        SportsmanLevel, on_delete=models.SET_NULL, null=True, blank=True, related_name="programs")
-
-    def __str__(self):
-        return f"{self.name} ({self.date})"
-
-
 class Sportsman(models.Model):
+    SUBSCRIPTION_CHOICES = [
+        ('free', 'Free'),
+        ('premium', 'Premium'),
+    ]
+
+    GENDER_CHOICES = [
+        ('male', 'Male'),
+        ('female', 'Female'),
+    ]
+
     name = models.CharField(max_length=100)
-    age = models.PositiveIntegerField()
-    password = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
+    password = models.CharField(max_length=100)
+    age = models.PositiveIntegerField()
+    weight = models.PositiveIntegerField()
+    gender = models.CharField(
+        max_length=10, choices=GENDER_CHOICES)
+    subscription_level = models.CharField(
+        max_length=10, choices=SUBSCRIPTION_CHOICES, default='free')
+
     level = models.ForeignKey(
-        SportsmanLevel, on_delete=models.SET_NULL, null=True, blank=True)
+        SportsmanLevel, on_delete=models.SET_NULL, null=True, blank=True
+    )
     city = models.ForeignKey(
-        City, on_delete=models.SET_NULL, null=True, blank=True)
-    program = models.ForeignKey(
-        Program, on_delete=models.SET_NULL, null=True, blank=True)
+        City, on_delete=models.SET_NULL, null=True, blank=True
+    )
 
     def __str__(self):
         return str(self.name)
+
+
+class MuscleGroup(models.Model):
+    name = models.CharField(max_length=100)
+    base_multiplier = models.FloatField(
+        help_text="Multiplier relative to user body weight (e.g. 0.7 for chest)")
+
+    def __str__(self):
+        return str(self.name)
+
+
+class BaseExercise(models.Model):
+    name = models.CharField(max_length=255)
+    muscle_group = models.ForeignKey(
+        MuscleGroup, on_delete=models.SET_NULL, null=True)
+    bodyweight = models.BooleanField(
+        default=True, help_text="If true, uses body weight as resistance")
+    notes = models.TextField(blank=True)
+
+    def __str__(self):
+        return str(self.name)
+
+
+class CustomExercise(models.Model):
+    user = models.ForeignKey(Sportsman, on_delete=models.CASCADE)
+    base_exercise = models.ForeignKey(BaseExercise, on_delete=models.CASCADE)
+    reps = models.PositiveIntegerField()
+    sets = models.PositiveIntegerField()
+    weight = models.FloatField(help_text="0 means bodyweight only.")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.name} - {self.base_exercise.name}"
+
+
+class UserProgram(models.Model):
+    user = models.ForeignKey(Sportsman, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    is_custom = models.BooleanField(default=False)
+    exercises = models.ManyToManyField(CustomExercise, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.name)
+
+
+class BaseProgram(models.Model):
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    # True for free programs, False for premium
+    created_at = models.DateTimeField(auto_now_add=True)
+    exercises = models.ManyToManyField(
+        BaseExercise, through='BaseProgramExercise', related_name='programs')
+
+    def __str__(self):
+        return str(self.name)
+
+
+class BaseProgramExercise(models.Model):
+    program = models.ForeignKey(BaseProgram, on_delete=models.CASCADE)
+    exercise = models.ForeignKey(BaseExercise, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('program', 'exercise')
+
+    def __str__(self):
+        return f"{self.program.name} - {self.exercise.name}"
