@@ -3,24 +3,45 @@ import Home from "./pages/Home";
 import Register from "./pages/Register";
 import ProgramCreate from "./pages/ProgramCreate";
 import Login from "./pages/Login";
+import Programs from "./pages/Programs";
+import User from "./pages/User";
+import Layout from "./components/Layout";
+import Coaches from "./pages/Coaches";
 
 function App() {
   const router = createBrowserRouter([
     {
-      path: "/home",
-      Component: Home,
-    },
-    {
-      path: "/register",
-      Component: Register,
-    },
-    {
-      path: "/programs/create",
-      Component: ProgramCreate,
-    },
-    {
-      path: "/login",
-      Component: Login,
+      Component: Layout,
+      children: [
+        {
+          path: "/home",
+          Component: Home,
+        },
+        {
+          path: "/register",
+          Component: Register,
+        },
+        {
+          path: "/programs/create",
+          Component: ProgramCreate,
+        },
+        {
+          path: "/login",
+          Component: Login,
+        },
+        {
+          path: "/myprograms",
+          Component: Programs,
+        },
+        {
+          path: "/myprofile",
+          Component: User,
+        },
+        {
+          path: "/coaches",
+          Component: Coaches,
+        },
+      ],
     },
   ]);
   return (

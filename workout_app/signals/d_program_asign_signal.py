@@ -36,6 +36,7 @@ def assign_default_programs(sender, instance, created, **kwargs):
 
             CustomExercise.objects.create(
                 user=instance,
+                program=user_program,
                 base_exercise=base_ex.exercise,
                 reps=reps,
                 sets=sets,

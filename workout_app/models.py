@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.utils import timezone
 
 class City(models.Model):
     city = models.CharField(max_length=100)
@@ -70,6 +70,9 @@ class BaseExercise(models.Model):
 
 class CustomExercise(models.Model):
     user = models.ForeignKey(Sportsman, on_delete=models.CASCADE)
+    program = models.ForeignKey(
+        'UserProgram', on_delete=models.CASCADE, related_name='exercises'
+    )
     base_exercise = models.ForeignKey(BaseExercise, on_delete=models.CASCADE)
     reps = models.PositiveIntegerField()
     sets = models.PositiveIntegerField()
@@ -85,7 +88,6 @@ class UserProgram(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     is_custom = models.BooleanField(default=False)
-    exercises = models.ManyToManyField(CustomExercise, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -112,4 +114,23 @@ class BaseProgramExercise(models.Model):
         unique_together = ('program', 'exercise')
 
     def __str__(self):
-        return f"{self.program.name} - {self.exercise.name}"
+        return f"{self.program.name} - {self.exercise.name}"    
+
+
+class Coach(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField(unique=True)
+    age = models.PositiveIntegerField()
+    city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True, blank=True)
+    years_of_experience = models.PositiveIntegerField()
+
+    def __str__(self):
+        return self.name
+   
+class UserLog(models.Model):
+    user = models.ForeignKey('Sportsman', on_delete=models.CASCADE)
+    action = models.TextField()
+    timestamp = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"{self.user.email} - {self.action} at {self.timestamp}"

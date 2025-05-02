@@ -63,8 +63,6 @@ CSRF_TRUSTED_ORIGINS = [
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'workout_app.auth.user_auth.SportsmanJWTAuthentication',
     )
 }
 ROOT_URLCONF = 'workout_project.urls'
@@ -91,6 +89,7 @@ WSGI_APPLICATION = 'workout_project.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DEBUG = env.bool("DEBUG", default=False)
+print(env("NAME"))
 # Database
 DATABASES = {
     'default': {
