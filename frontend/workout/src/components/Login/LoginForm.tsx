@@ -20,7 +20,12 @@ function LoginForm({}: Props) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await api.post("login/", formData);
+      const respone = await api.post("login/", formData);
+      const { access, id, name } = respone.data;
+      // Save to localStorage
+      localStorage.setItem("token", access);
+      localStorage.setItem("userId", id);
+      localStorage.setItem("userName", name);
       navigate("/home");
     } catch (error: any) {
       if (error.response) {

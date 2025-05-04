@@ -19,8 +19,23 @@ function UserPrograms() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/user/programs/5")
-      .then((res) => res.json())
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("No token found");
+      return;
+    }
+
+    fetch("http://127.0.0.1:8000/user/programs/", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Failed to fetch programs");
+        }
+        return res.json();
+      })
       .then((data: UserProgram[]) => {
         setPrograms(data);
         setLoading(false);
