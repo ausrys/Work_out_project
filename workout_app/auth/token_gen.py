@@ -1,9 +1,14 @@
-from rest_framework_simplejwt.tokens import RefreshToken
+import datetime
+import os
+
+import jwt
+
 
 def get_tokens_for_user(user):
-    refresh = RefreshToken.for_user(user)
-    return {
-        'refresh': str(refresh),
-        'access': str(refresh.access_token),
+    payload = {
+        'id': user.id,
+        'exp': datetime.datetime.now() + datetime.timedelta(days=360)
     }
-
+    token = jwt.encode(
+        payload=payload, key=os.environ['JWTSECRET'], algorithm="HS256")
+    return token

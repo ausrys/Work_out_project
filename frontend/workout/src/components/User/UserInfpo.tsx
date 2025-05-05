@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
+import api from "../../api/axios";
 
 interface Sportsman {
   id: number;
@@ -19,12 +20,11 @@ function UserInfpo() {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/user-info/5/`);
-        if (!response.ok) {
+        const response = await api.get("user-info/")
+        if (!response) {
           throw new Error("Failed to fetch user profile.");
         }
-        const data = await response.json();
-        setUser(data);
+        setUser(response.data);
       } catch (err) {
         setError((err as Error).message);
       } finally {

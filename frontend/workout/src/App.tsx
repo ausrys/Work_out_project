@@ -7,6 +7,7 @@ import Programs from "./pages/Programs";
 import User from "./pages/User";
 import Layout from "./components/Layout";
 import Coaches from "./pages/Coaches";
+import Subscription from "./pages/Subscription";
 
 function App() {
   const router = createBrowserRouter([
@@ -41,6 +42,10 @@ function App() {
           path: "/coaches",
           Component: Coaches,
         },
+        {
+          path: "/change-subscription",
+          Component: Subscription
+        }
       ],
     },
   ]);

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import api from "../../api/axios";
 interface CustomExercise {
   id: number;
   reps: number;
@@ -19,25 +20,9 @@ function UserPrograms() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      console.error("No token found");
-      return;
-    }
-
-    fetch("http://127.0.0.1:8000/user/programs/", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
+    api.get("user/programs/")
       .then((res) => {
-        if (!res.ok) {
-          throw new Error("Failed to fetch programs");
-        }
-        return res.json();
-      })
-      .then((data: UserProgram[]) => {
-        setPrograms(data);
+        setPrograms(res.data);
         setLoading(false);
       })
       .catch((err) => {
