@@ -8,6 +8,7 @@ import User from "./pages/User";
 import Layout from "./components/Layout";
 import Coaches from "./pages/Coaches";
 import Subscription from "./pages/Subscription";
+import Payments from "./pages/Payments";
 
 function App() {
   const router = createBrowserRouter([
@@ -45,6 +46,10 @@ function App() {
         {
           path: "/change-subscription",
           Component: Subscription
+        },
+        {
+          path: "/payments",
+          Component: Payments
         }
       ],
     },

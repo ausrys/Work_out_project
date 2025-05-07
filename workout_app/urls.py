@@ -11,4 +11,5 @@ urlpatterns = [
     path('coaches/', views.get_all_coaches, name='get_all_coaches'),
     path('create-checkout-session/', views.create_checkout_session),
     path('webhooks/stripe/', views.stripe_webhook),
+    path('payments/', views.user_payments),
 ]

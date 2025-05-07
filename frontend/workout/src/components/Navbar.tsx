@@ -17,6 +17,9 @@ const Navbar = () => {
           <NavLink to={"/coaches"} className="hover:underline">
             Coaches
           </NavLink>
+          <NavLink to={"/payments"} className="hover:underline">
+            My payments
+          </NavLink>
         </div>
       </div>
     </nav>

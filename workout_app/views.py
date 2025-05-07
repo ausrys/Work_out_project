@@ -7,15 +7,17 @@ from rest_framework.decorators import api_view, permission_classes, \
     authentication_classes
 from django.views.decorators.csrf import csrf_exempt
 import jwt
-from workout_app.auth.token_gen import get_tokens_for_user
 
+from workout_app.auth.token_gen import get_tokens_for_user
+from workout_app.auth.user_auth import is_user_authenticated
 from workout_app.serializers.coach_serializer import CoachSerializer
 from workout_app.serializers.login_serializer import LoginSerializer
+from workout_app.serializers.payments_serializer import UserPaymentSerializer
 from workout_app.serializers.sportsman_serializer import\
     SportsmanProfileSerializer, SportsmanRegisterSerializer
 from workout_app.serializers.programs_by_user_serializer import\
     UserProgramSerializer
-from .models import Coach, Sportsman, UserLog,  UserProgram
+from .models import Coach, Sportsman, UserLog,  UserProgram, UserPayment
 
 # Create your views here.
 
@@ -53,16 +55,7 @@ def login_view(request):
 @api_view(['GET'])
 def get_user_programs(request):
     token = request.COOKIES.get("auth_token")
-    if not token:
-        return Response({'error': 'Unauthenticated, please log in'},
-                        status=status.HTTP_400_BAD_REQUEST)
-    # Optional: Verify user is of type Sportsman if needed
-    try:
-        payload = jwt.decode(
-            token, key=os.environ['JWTSECRET'], algorithms=['HS256'])
-    except jwt.ExpiredSignatureError:
-        return Response({'error': 'Unauthenticated, please log in'},
-                        status=status.HTTP_400_BAD_REQUEST)
+    payload = is_user_authenticated(token)
     try:
         sportsman = Sportsman.objects.get(id=payload['id'])
     except Sportsman.DoesNotExist:
@@ -78,15 +71,7 @@ def get_user_programs(request):
 @api_view(['GET'])
 def get_user_profile(request):
     token = request.COOKIES.get("auth_token")
-    if not token:
-        return Response({'error': 'Unauthenticated, please log in'},
-                        status=status.HTTP_400_BAD_REQUEST)
-    try:
-        payload = jwt.decode(
-            token, key=os.environ['JWTSECRET'], algorithms=['HS256'])
-    except jwt.ExpiredSignatureError:
-        return Response({'error': 'Unauthenticated, please log in'},
-                        status=status.HTTP_400_BAD_REQUEST)
+    payload = is_user_authenticated(token)
     try:
         user = Sportsman.objects.get(id=payload['id'])
         serializer = SportsmanProfileSerializer(user)
@@ -140,7 +125,7 @@ def create_checkout_session(request):
             'quantity': 1,
         }],
         mode='payment',
-        success_url='http://localhost:5173/success',
+        success_url='http://localhost:5173/myprofile',
         cancel_url='http://localhost:5173/cancel',
     )
     return Response({'id': session.id})
@@ -174,7 +159,22 @@ def stripe_webhook(request):
             user.subscription_level = 'premium'
             user.save()
             print(f"User {user.email} upgraded to premium.")
+            UserPayment.objects.create(
+                user=user,
+                payment_value=10.00,  # Adjust dynamically if needed
+            )
         except Sportsman.DoesNotExist:
             print(f"User with email {customer_email} not found.")
 
     return Response({'status': 'success'})
+
+
+@api_view(['GET'])
+def user_payments(request):
+    token = request.COOKIES.get("auth_token")
+    payload = is_user_authenticated(token)
+    user = Sportsman.objects.get(id=payload['id'])
+    payments = UserPayment.objects.filter(
+        user=user).order_by('-date_time')
+    serializer = UserPaymentSerializer(payments, many=True)
+    return Response(serializer.data)
