@@ -12,4 +12,5 @@ urlpatterns = [
     path('create-checkout-session/', views.create_checkout_session),
     path('webhooks/stripe/', views.stripe_webhook),
     path('payments/', views.user_payments),
+    path('get-advertiser-data/', views.get_advertiser_data)
 ]

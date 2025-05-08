@@ -1,7 +1,6 @@
 import { loadStripe } from "@stripe/stripe-js";
 import api from "../../api/axios";
 const public_key = import.meta.env.VITE_STRIPE_PUBLIC_KEY
-console.log(public_key);
 const stripePromise = loadStripe(public_key);
 type Props = {}
 

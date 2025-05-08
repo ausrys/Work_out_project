@@ -1,5 +1,6 @@
 import os
 
+from django.core.cache import cache
 import stripe
 from rest_framework.response import Response
 from rest_framework import status
@@ -17,8 +18,8 @@ from workout_app.serializers.sportsman_serializer import\
     SportsmanProfileSerializer, SportsmanRegisterSerializer
 from workout_app.serializers.programs_by_user_serializer import\
     UserProgramSerializer
-from .models import Coach, Sportsman, UserLog,  UserProgram, UserPayment
-
+from .models import Advertiser, Coach, Sportsman, UserLog,  UserProgram, UserPayment
+from workout_app.tasks import fetch_all_advertiser_data
 # Create your views here.
 
 
@@ -178,3 +179,16 @@ def user_payments(request):
         user=user).order_by('-date_time')
     serializer = UserPaymentSerializer(payments, many=True)
     return Response(serializer.data)
+
+
+@api_view(["GET"])
+def get_advertiser_data(_):
+    advertisers = Advertiser.objects.all()
+    results = []
+
+    for advertiser in advertisers:
+        cached = cache.get(f"advertiser_data_{advertiser.id}")
+        if cached:
+            results.append(cached)
+
+    return Response(results)

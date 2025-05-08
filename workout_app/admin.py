@@ -1,7 +1,8 @@
 from django.contrib import admin
 from .models import City, SportsmanLevel, BaseExercise, \
     CustomExercise, UserProgram, Sportsman, MuscleGroup, \
-    BaseProgram, BaseProgramExercise, Coach, UserLog
+    BaseProgram, BaseProgramExercise, Coach, UserLog, \
+    Advertiser
 # Register your models here.
 admin.site.register(City)
 admin.site.register(SportsmanLevel)
@@ -14,3 +15,4 @@ admin.site.register(BaseProgram)
 admin.site.register(BaseProgramExercise)
 admin.site.register(Coach)
 admin.site.register(UserLog)
+admin.site.register(Advertiser)
