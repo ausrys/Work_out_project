@@ -10,6 +10,7 @@ import Layout from "./components/Layout";
 import Coaches from "./pages/Coaches";
 import Subscription from "./pages/Subscription";
 import Payments from "./pages/Payments";
+import AdvertiserLogin from "./pages/AdvertiserLogin";
 
 function App() {
   const queryClient = new QueryClient();
@@ -53,6 +54,10 @@ function App() {
         {
           path: "/payments",
           Component: Payments
+        },
+        {
+          path: "/advertiser/login",
+          Component: AdvertiserLogin
         }
       ],
     },

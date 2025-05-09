@@ -1,6 +1,7 @@
 from rest_framework import serializers
-from workout_app.models import Sportsman
 from django.contrib.auth.hashers import make_password
+
+from workout_app.models import Sportsman
 
 
 class SportsmanRegisterSerializer(serializers.ModelSerializer):
@@ -27,6 +28,7 @@ class SportsmanRegisterSerializer(serializers.ModelSerializer):
 class SportsmanProfileSerializer(serializers.ModelSerializer):
     city = serializers.StringRelatedField()
     level = serializers.StringRelatedField()
+
     class Meta:
         model = Sportsman
         exclude = ['password']  # exclude sensitive field

@@ -2,6 +2,7 @@ import { Outlet } from "react-router";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import RightPanel from "./Ads/RightPanel";
+import BottomPanel from "./Ads/BottomPanel";
 
 const Layout = () => {
   return (
@@ -17,7 +18,7 @@ const Layout = () => {
         </main>
         <RightPanel />
       </div>
-
+      <BottomPanel />
       <Footer />
     </div>
   );
