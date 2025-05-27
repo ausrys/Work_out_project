@@ -171,3 +171,11 @@ class AdvertiserAPI(models.Model):
 
     def __str__(self):
         return f"{self.api_url} ({'Accepted' if self.is_accepted else 'Pending'})"
+
+
+class BlogPost(models.Model):
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+
+    def __str__(self):
+        return str(self.title)

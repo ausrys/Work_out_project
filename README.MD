@@ -20,31 +20,33 @@ The app uses the `django` web framework for API's and 'postgres' DB for storing 
 
 ## 📦 Installation
 
-
-### With out docker:
+### With out docker
 
 - Clone the repository
 - Inside the stocl_api folder run:
-```
+
+``` bash
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
+
 - Install dependencies
-```
+
+``` bash
 pip install -r requirements.txt
 ```
 
 Run the program:
-```
+
+``` bash
 python manage.py runserver
 ```
 
-### With docker:
+### With docker
 
-```
+``` bash
 docker-composer build
 docker-comperer up
 ```
-
 
 ## API ENDPOINTS

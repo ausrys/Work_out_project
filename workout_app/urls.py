@@ -1,18 +1,19 @@
 from django.urls import path
-from . import views
+from workout_app.views import *
 
 
 urlpatterns = [
-    path('registration/', views.registration, name='registration'),
-    path('login/', views.login_view, name='login'),
-    path('user/programs/', views.get_user_programs, name='user_programs'),
-    path('user-info/', views.get_user_profile,
+    path('registration/', registration, name='registration'),
+    path('login/', login_view, name='login'),
+    path('user/programs/', get_user_programs, name='user_programs'),
+    path('user-info/', get_user_profile,
          name='user-profile'),
-    path('coaches/', views.get_all_coaches, name='get_all_coaches'),
-    path('create-checkout-session/', views.create_checkout_session),
-    path('webhooks/stripe/', views.stripe_webhook),
-    path('payments/', views.user_payments),
-    path('get-advertiser-data/', views.get_advertiser_data),
-    path('advertisers/register/', views.advertiser_register),
-    path('advertisers/login/', views.advertiser_login),
+    path('coaches/', get_all_coaches, name='get_all_coaches'),
+    path('create-checkout-session/', create_checkout_session),
+    path('webhooks/stripe/', stripe_webhook),
+    path('payments/', user_payments),
+    path('get-advertiser-data/', get_advertiser_data),
+    path('advertisers/register/', advertiser_register),
+    path('advertisers/login/', advertiser_login),
+    path('blogs/', get_all_articles),
 ]
