@@ -15,12 +15,17 @@ from workout_app.serializers.adveriser_serializer import \
 def get_advertiser_data(_):
     results = []
     advertisers = Advertiser.objects.all()
-    for advertiser in advertisers:
-        accepted_apis = advertiser.apis.filter(is_accepted=True)
-        for api_entry in accepted_apis:
-            cached = cache.get(f"advertiser_data_{api_entry.id}")
-            if cached:
-                results.append(cached)
+
+    try:
+        for advertiser in advertisers:
+            accepted_apis = advertiser.apis.filter(is_accepted=True)
+            for api_entry in accepted_apis:
+                cached = cache.get(f"advertiser_data_{api_entry.id}")
+                if cached:
+                    results.append(cached)
+    except (ConnectionError, TimeoutError):
+        # Redis not running
+        return Response([])
 
     return Response(results)
 

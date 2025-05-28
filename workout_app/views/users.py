@@ -1,6 +1,7 @@
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
+from django.shortcuts import redirect
 from workout_app.auth.user_auth import is_user_authenticated
 from workout_app.models import Sportsman, UserPayment, UserProgram
 from workout_app.serializers.payments_serializer import UserPaymentSerializer
@@ -14,13 +15,16 @@ from workout_app.serializers.sportsman_serializer import \
 def get_user_profile(request):
     token = request.COOKIES.get("auth_token")
     payload = is_user_authenticated(token)
+
+    if not payload:
+        return Response({'error': 'Unauthenticated action, please log in'},
+                        status=status.HTTP_401_UNAUTHORIZED)
     try:
         user = Sportsman.objects.get(id=payload['id'])
         serializer = SportsmanProfileSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Sportsman.DoesNotExist:
-        return Response({'error': 'User not found'},
-                        status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
 @api_view(['GET'])

@@ -10,6 +10,7 @@ function BottomPanel() {
     },
     staleTime: 10 * 60 * 1000,
     gcTime: 15 * 60 * 1000,
+    retry: false
   });
 
   if (isLoading || error || !ads?.length) return null;

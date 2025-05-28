@@ -1,5 +1,5 @@
 import { createBrowserRouter, RouterProvider } from "react-router";
-import {QueryClient, QueryClientProvider} from "@tanstack/react-query"
+import {QueryClientProvider} from "@tanstack/react-query"
 import Home from "./pages/Home";
 import Register from "./pages/Register";
 import ProgramCreate from "./pages/ProgramCreate";
@@ -11,9 +11,10 @@ import Coaches from "./pages/Coaches";
 import Subscription from "./pages/Subscription";
 import Payments from "./pages/Payments";
 import AdvertiserLogin from "./pages/AdvertiserLogin";
+import { queryClient } from "./queryClient";
+import { userLoader } from "./loaders/userLoader";
 
 function App() {
-  const queryClient = new QueryClient();
 
   const router = createBrowserRouter([
     {
@@ -42,6 +43,7 @@ function App() {
         {
           path: "/myprofile",
           Component: User,
+          loader: userLoader,
         },
         {
           path: "/coaches",

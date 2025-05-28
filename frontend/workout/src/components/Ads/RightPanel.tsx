@@ -9,11 +9,11 @@ function RightPanel() {
             return res.data;
         },
         staleTime: 10  * 60 *1000,
-        gcTime: 10 * 60 * 1000
+        gcTime: 10 * 60 * 1000,
+        retry: false
     })
     
-    if (isLoading) return <p>Loading ads...</p>;
-    if (error) return <p>Failed to load ads</p>;
+    if (isLoading || error || !ads?.length) return null;
     const midPrioAdds = ads.filter((ad: any) => ad.priority === 1);
     return (
         <aside className="w-64 min-h-screen p-4 border-l border-gray-300 bg-white overflow-y-auto">

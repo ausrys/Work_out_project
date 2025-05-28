@@ -16,4 +16,5 @@ urlpatterns = [
     path('advertisers/register/', advertiser_register),
     path('advertisers/login/', advertiser_login),
     path('blogs/', get_all_articles),
+    path('logout/', logout_user, name='logout')
 ]

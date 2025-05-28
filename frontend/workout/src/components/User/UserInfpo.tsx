@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router";
-import api from "../../api/axios";
+import { Link, useLoaderData } from "react-router";
+import { useQuery } from "@tanstack/react-query";
+import { getUserProfile } from "../../api/apiFns";
 
 interface Sportsman {
   id: number;
@@ -14,28 +14,13 @@ interface Sportsman {
   level: number | null;
 }
 function UserInfpo() {
-  const [user, setUser] = useState<Sportsman | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        const response = await api.get("user-info/")
-        if (!response) {
-          throw new Error("Failed to fetch user profile.");
-        }
-        setUser(response.data);
-      } catch (err) {
-        setError((err as Error).message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUserProfile();
-  }, []);
-  if (loading) return <p>Loading profile...</p>;
-  if (error) return <p>Error: {error}</p>;
+  const initialData = useLoaderData(); // comes from loader
+  const { data: user } = useQuery({
+    queryKey: ["userProfile"],
+    queryFn: getUserProfile,
+    initialData,
+  });
+  
   if (!user) return <p>No user data available.</p>;
   return (
     <div className="p-4 border rounded shadow-md max-w-md mx-auto mt-6">

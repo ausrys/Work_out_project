@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -36,3 +38,16 @@ def login_view(request):
         return response
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+def logout_user(_):
+    response = Response({"message": "Logged out"}, status=200)
+    # Overwrite cookie with past expiration to invalidate it
+    response.set_cookie(
+        key="auth_token",
+        value="",
+        expires=datetime.now() - timedelta(days=1),
+        httponly=True,
+    )
+    return response
